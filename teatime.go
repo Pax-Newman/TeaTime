@@ -36,8 +36,6 @@ type Model struct {
 	start   time.Time
 	current time.Time
 
-	duration time.Duration
-
 	running  bool
 	interval time.Duration
 }
@@ -87,7 +85,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case TickMsg:
 		if m.running {
 			m.current = time.Time(msg)
-			m.duration += m.interval
 			return m, clockTick(m.interval)
 		}
 	case StartStopMsg:
@@ -119,7 +116,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	elapsed := m.current.Sub(m.start).Round(m.interval).String()
-
 	return elapsed
 }
 
