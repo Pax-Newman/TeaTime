@@ -122,17 +122,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.start = time.Now()
 			m.current = time.Now()
 		}
-
-	// -------------------------- TEMP DEBUGGING CASES --------------------------
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return m, tea.Quit
-		case "r":
-			return m, m.Reset()
-		case "s":
-			return m, m.Toggle()
-		}
 	}
 	return m, nil
 }
