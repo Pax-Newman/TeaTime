@@ -1,5 +1,5 @@
 // Provides a simple system clock based timer
-package main
+package teatime
 
 import (
 	"sync"
@@ -140,8 +140,4 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	elapsed := m.current.Sub(m.start).Round(m.interval).String()
 	return elapsed
-}
-
-func main() {
-	tea.NewProgram(NewWithInterval(time.Millisecond)).Start()
 }
