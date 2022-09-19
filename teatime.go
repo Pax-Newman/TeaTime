@@ -1,3 +1,4 @@
+// Provides a simple system clock based timer
 package main
 
 import (
@@ -5,6 +6,18 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+// Functions
+
+func NewWithInterval(interval time.Duration) Model {
+	return Model{
+		interval: interval,
+	}
+}
+
+func New() Model {
+	return NewWithInterval(time.Second)
+}
 
 // Messages
 type TickMsg time.Time
@@ -19,7 +32,7 @@ func clockTick(interval time.Duration) tea.Cmd {
 }
 
 // Model
-type model struct {
+type Model struct {
 	start   time.Time
 	current time.Time
 
@@ -30,42 +43,46 @@ type model struct {
 }
 
 // Model Methods
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return tea.Batch(
 		m.Reset(),
 		m.Start(),
 	)
 }
 
-func (m model) Start() tea.Cmd {
+func (m Model) Start() tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg { return StartStopMsg{running: true} },
 		clockTick(m.interval),
 	)
 }
 
-func (m model) Stop() tea.Cmd {
+func (m Model) Stop() tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg { return StartStopMsg{running: false} },
 		clockTick(m.interval),
 	)
 }
 
-func (m model) Reset() tea.Cmd {
+func (m Model) Reset() tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg { return ResetMsg{} },
 		clockTick(m.interval),
 	)
 }
 
-func (m model) Toggle() tea.Cmd {
+func (m Model) Toggle() tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg { return StartStopMsg{!m.running} },
 		clockTick(m.interval),
 	)
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Running() bool {
+	return m.running
+}
+
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case TickMsg:
 		if m.running {
@@ -100,14 +117,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	elapsed := m.current.Sub(m.start).Round(m.interval).String()
 
 	return elapsed
 }
 
 func main() {
-	tea.NewProgram(model{
+	tea.NewProgram(Model{
 		interval: time.Millisecond,
 	}).Start()
 }
