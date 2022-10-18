@@ -101,6 +101,10 @@ func (m Model) Running() bool {
 	return m.running
 }
 
+func (m Model) Elapsed() time.Duration {
+	return m.current.Sub(m.start).Round(m.interval)
+}
+
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case TickMsg:
